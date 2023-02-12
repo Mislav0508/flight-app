@@ -14,27 +14,38 @@ const Login = () => {
 
     const handleLogin = () => {
 
-        dispatch(login({
+      dispatch(login({
+          user: {
             name,
             email,
             password,
             loggedIn: true
-        }))
+          },
+          token: "test token"
+      }))
+
     }
 
     return (
-        <div className='login'>
+      <div className='login'>
+
         <form className='login__form'>
-            <h1>Login Here </h1>
-            <input type='name' placeholder='Name' value={name} onChange={(e) => setName(e.target.value)}/>
-            <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)}/>
-            <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)}/>
-            <Link to="/dashboard" onClick={() => handleLogin()}>
-                <Button variant="contained" type='submit'>Login</Button>
-            </Link>
+
+          <h1>Login Here </h1>
+
+          <input type='name' placeholder='Name' value={name} onChange={(e) => setName(e.target.value)}/>
+
+          <input type='email' placeholder='Email' value={email} onChange={(e) => setEmail(e.target.value)}/>
+
+          <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)}/>
+
+          <Link to="/dashboard" onClick={() => handleLogin()}>
+              <Button variant="contained" type='submit'>Login</Button>
+          </Link>
             
         </form>
-        </div>
+
+      </div>
     )
 }
 

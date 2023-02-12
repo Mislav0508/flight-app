@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout, selectUser } from '../features/userSlice'
 import "./Logout.css"
@@ -19,21 +19,21 @@ const Dashboard = () => {
     }
 
     return (
-        <Box sx={{ 
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            border: '1px solid red',
-            textAlign: 'center' 
-            }}>
+      <Box sx={{ 
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          border: '1px solid red',
+          textAlign: 'center' 
+          }}>
         <Stack spacing={2}>
-            <h1>Welcome <span className='user__name'>{user?.name}</span></h1>
-            
-            <Link to="/" onClick={() => handleLogout()}>
-                <button className='logout__button' >Logout</button>
-            </Link>
+          <h1>Welcome <span className='user__name'>{user.name}</span></h1>
+          
+          <Link to="/" onClick={() => handleLogout()}>
+            <button className='logout__button' >Logout</button>
+          </Link>
         </Stack>
-        </Box>
+      </Box>
 
     )
 }
