@@ -1,0 +1,7 @@
+.user__name {
+    color: purple;
+}
+
+.dashboard__title {
+    color: #24a3ec; font-family: 'Helvetica Neue', sans-serif; font-size: 46px; font-weight: 100; line-height: 50px; letter-spacing: 1px; padding: 0 0 20px; border-bottom: double #555;
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout, selectUser } from '../features/userSlice'
-import "./Logout.css"
+import "./Dashboard.css"
 import { Link } from "react-router-dom"
 import axios from 'axios';
 import MaterialReactTable from 'material-react-table';
@@ -238,10 +238,12 @@ const Dashboard = () => {
         width: '100%',
         display: 'flex',
         justifyContent: 'center',
-        border: '1px solid red',
-        textAlign: 'center' 
+        textAlign: 'center' ,
+        mt: "4rem"
         }}>
-      <Stack spacing={2}>
+      <Stack spacing={5}>
+        <h1 className='dashboard__title'>DASHBOARD</h1>
+
         <h1>Welcome <span className='user__name'>{user.name}</span></h1>
 
         {loading ? (<div>Loading...</div>) : error ? (
@@ -301,8 +303,8 @@ const Dashboard = () => {
 
         
         
-        <Link to="/" onClick={() => handleLogout()}>
-          <button className='logout__button' >Logout</button>
+        <Link to="/" style={{ textDecoration: 'none' }} onClick={() => handleLogout()}>
+          <Button variant="contained" type='submit' color="error">Logout</Button>
         </Link>
       </Stack>
     </Box>
@@ -353,7 +355,7 @@ export const CreateNewFlightModal = ({ open, columns, onClose, onSubmit }) => {
       </DialogContent>
       <DialogActions sx={{ p: '1.25rem' }}>
         <Button onClick={onClose}>Cancel</Button>
-        <Button color="secondary" onClick={handleSubmit} variant="contained">
+        <Button color="primary" onClick={handleSubmit} variant="contained">
           Create New Flight
         </Button>
       </DialogActions>

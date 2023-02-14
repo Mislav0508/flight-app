@@ -39,7 +39,7 @@ const Login = () => {
 
           <input type='password' placeholder='Password' value={password} onChange={(e) => setPassword(e.target.value)}/>
 
-          <Link to="/dashboard" onClick={() => handleLogin()}>
+          <Link style={{ textDecoration: 'none' }} to="/dashboard" onClick={() => handleLogin()}>
               <Button variant="contained" type='submit'>Login</Button>
           </Link>
             
