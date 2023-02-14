@@ -46,8 +46,6 @@ const Dashboard = () => {
       })
       const data = await response.data
 
-      console.log("data",data);
-
       const flightIds = Object.keys(data)
       setIds(flightIds)
 
@@ -95,9 +93,32 @@ const Dashboard = () => {
   };
 
   const handleSaveRowEdits = async ({ exitEditingMode, row, values }) => {
+    
     if (!Object.keys(validationErrors).length) {
       flights[row.index] = values;
       //send/receive api updates here, then refetch or update local table data for re-render
+      try {
+        setLoading(true)
+
+        const flightToUpdate = ids[row.index]
+
+        const flightData = {
+          flightNumber: values.flightNumber,
+          dateDeparture: values.dateDeparture,
+          dateArrival: values.dateArrival,
+          aircraftType: values.aircraftType,
+          aircraftRegistration: values.aircraftRegistration
+        }
+
+        const API_URL = `https://inxelo-interview-project-default-rtdb.europe-west1.firebasedatabase.app/5bdf0ab7-c609-4d2f-a3c7-e593d1097886/flights/${flightToUpdate}.json`
+
+        await axios.put(API_URL, flightData)
+
+      } catch (error) {
+        setError(error)
+      } finally {
+        setLoading(false);
+      }
       setFlights([...flights]);
       exitEditingMode(); //required to exit editing mode and close modal
     }
