@@ -96,6 +96,7 @@ const Dashboard = () => {
     
     if (!Object.keys(validationErrors).length) {
       flights[row.index] = values;
+
       //send/receive api updates here, then refetch or update local table data for re-render
       try {
         setLoading(true)
@@ -130,17 +131,16 @@ const Dashboard = () => {
 
   const handleDeleteRow = useCallback(
     async (row) => {
-      
       if (
-        !confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
+        !confirm(`Are you sure you want to delete ${row.getValue('flightNumber')}?`)
       ) {
         return;
       }
+      //send api delete request here, then refetch or update local table data for re-render
       try {
         setLoading(true)
 
         const flightToDelete = ids[row.id]
-        console.log("flightToDelete",flightToDelete);
 
         const API_URL = `https://inxelo-interview-project-default-rtdb.europe-west1.firebasedatabase.app/5bdf0ab7-c609-4d2f-a3c7-e593d1097886/flights/${flightToDelete}.json`
 
@@ -164,7 +164,6 @@ const Dashboard = () => {
         error: !!validationErrors[cell.id],
         helperText: validationErrors[cell.id],
         onBlur: (event) => {
-          console.log(event.target.name);
           const isValid = validateRequired(event.target.value)
           if (!isValid) {
             //set validation error for cell if invalid
@@ -230,8 +229,6 @@ const Dashboard = () => {
     ],
     [getCommonEditTextFieldProps],
   )
-    
-  console.log("flights",flights);
   
   return (
     <Box sx={{ 
