@@ -25,6 +25,7 @@ import { useCallback } from 'react'
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [flights, setFlights] = useState(null);
+  const [ids, setIds] = useState(null);
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [error, setError] = useState(null);
@@ -45,6 +46,11 @@ const Dashboard = () => {
       })
       const data = await response.data
 
+      console.log("data",data);
+
+      const flightIds = Object.keys(data)
+      setIds(flightIds)
+
       const flightsArray = [...Object.values(data)]
       setFlights(flightsArray)
       
@@ -64,18 +70,18 @@ const Dashboard = () => {
     try {
       setLoading(true)
 
-      var myHeaders = new Headers()
-      myHeaders.append("Content-Type", "application/json")
-
-      var body = JSON.stringify(values);
-      console.log("body",body);
-
-      await axios.post('https://inxelo-interview-project-default-rtdb.europe-west1.firebasedatabase.app/5bdf0ab7-c609-4d2f-a3c7-e593d1097886/flights.json', {
-        headers: myHeaders,
-        followRedirect: true,
-        method: 'post',
-        data: values
-      })
+      const flightData = {
+        flightNumber: values.flightNumber,
+        dateDeparture: values.dateDeparture,
+        dateArrival: values.dateArrival,
+        aircraftType: values.aircraftType,
+        aircraftRegistration: values.aircraftRegistration
+      };
+      
+      const API_URL = 'https://inxelo-interview-project-default-rtdb.europe-west1.firebasedatabase.app/5bdf0ab7-c609-4d2f-a3c7-e593d1097886/flights.json'
+      
+      await axios.post(API_URL, flightData)
+      
 
       fetchData()
       
@@ -102,13 +108,29 @@ const Dashboard = () => {
   }
 
   const handleDeleteRow = useCallback(
-    (row) => {
+    async (row) => {
+      
       if (
         !confirm(`Are you sure you want to delete ${row.getValue('firstName')}`)
       ) {
         return;
       }
-      //send api delete request here, then refetch or update local table data for re-render
+      try {
+        setLoading(true)
+
+        const flightToDelete = ids[row.id]
+        console.log("flightToDelete",flightToDelete);
+
+        const API_URL = `https://inxelo-interview-project-default-rtdb.europe-west1.firebasedatabase.app/5bdf0ab7-c609-4d2f-a3c7-e593d1097886/flights/${flightToDelete}.json`
+
+        await axios.delete(API_URL);
+
+      } catch (error) {
+        setError(error)
+      } finally {
+        setLoading(false);
+      }
+      
       flights.splice(row.index, 1);
       setFlights([...flights]);
     },
