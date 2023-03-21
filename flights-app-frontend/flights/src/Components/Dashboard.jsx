@@ -8,21 +8,15 @@ import MaterialReactTable from 'material-react-table';
 import {
   Box,
   Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   IconButton,
   Stack,
-  TextField,
   Tooltip,
 } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useCallback } from 'react'
 import { API_BASE_URL } from '../config/config_dev';
-import { DateTimePicker , LocalizationProvider} from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import moment from 'moment';
+import CreateNewFlightModal from "./CreateNewFlightModal"
 
 /* eslint-disable */
 
@@ -79,17 +73,24 @@ const Dashboard = () => {
     try {
       setLoading(true)
 
+      // Formatting DateTimePicker values
+      const dateTimePickerValueDeparture = new Date(values.departureTime);
+      const departureTime = moment(dateTimePickerValueDeparture).format('YYYY-MM-DDTHH:mm:ss.SSS');
+      const dateTimePickerValueArrival = new Date(values.arrivalTime);
+      const arrivalTime = moment(dateTimePickerValueArrival).format('YYYY-MM-DDTHH:mm:ss.SSS');
+
       const flightData = {
         flightNumber: values.flightNumber,
-        departureTime: moment(values.departureTime).format('YYYY-MM-DDTHH:mm:ss.SSS'),
-        arrivalTime: moment(values.arrivalTime).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+        departureTime: departureTime,
+        arrivalTime: arrivalTime,
         aircraftType: values.aircraftType,
         aircraftRegistration: values.aircraftRegistration
       };
+
       flights.push({
         ...values,
-        departureTime: moment(values.departureTime).format('YYYY-MM-DD HH:mm:ss'),
-        arrivalTime: moment(values.arrivalTime).format('YYYY-MM-DD HH:mm:ss')
+        departureTime: moment(departureTime).format('YYYY-MM-DD HH:mm:ss'),
+        arrivalTime: moment(arrivalTime).format('YYYY-MM-DD HH:mm:ss')
       });
 
       await axios.post(API_BASE_URL, flightData, {
@@ -324,75 +325,6 @@ const Dashboard = () => {
     </Box>
   )
 }
-
-//example of creating a mui dialog modal for creating new rows
-export const CreateNewFlightModal = ({ open, columns, onClose, onSubmit }) => {
-  const [values, setValues] = useState(() =>
-    columns.reduce((acc, column) => {
-      acc[column.accessorKey ?? ''] = '';
-      return acc;
-    }, {}),
-  );
-
-  const handleSubmit = () => {
-    //put your validation logic here
-    onSubmit(values);
-    onClose();
-  };
-
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-    <Dialog open={open}>
-      <DialogTitle textAlign="center">Create New Account</DialogTitle>
-      <DialogContent>
-        <form onSubmit={(e) => e.preventDefault()}>
-          <Stack
-            sx={{
-              width: '100%',
-              minWidth: { xs: '300px', sm: '360px', md: '400px' },
-              gap: '1.5rem',
-            }}
-          >
-            {columns.map((column) => (
-              column.accessorKey === "departureTime" || column.accessorKey === "arrivalTime"
-                ?
-              <DateTimePicker
-                key={column.accessorKey}
-                label={column.header}
-                name={column.accessorKey}
-                value={values[column.accessorKey]}
-                onChange={(e) =>
-                  setValues({ ...values,
-                    [column.accessorKey === "departureTime" ? "departureTime"
-                      : "arrivalTime"]: e })
-                }
-                required={true}/>
-                :
-              <TextField
-                key={column.accessorKey}
-                label={column.header}
-                name={column.accessorKey}
-                value={values[column.accessorKey]}
-                onChange={(e) =>
-                  setValues({ ...values, [e.target.name]: e.target.value })
-                }
-                required={true}
-              />
-            ))}
-          </Stack>
-        </form>
-      </DialogContent>
-      <DialogActions sx={{ p: '1.25rem' }}>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button color="primary" onClick={handleSubmit} variant="contained"
-                disabled={!Object.values(values).every((value) => !!value)}>
-          Create New Flight
-        </Button>
-      </DialogActions>
-    </Dialog>
-    </LocalizationProvider>
-  );
-};
 
 const validateRequired = (value) => !!value.length;
 
