@@ -17,6 +17,7 @@ import { useCallback } from 'react'
 import { API_BASE_URL } from '../config/config_dev';
 import moment from 'moment';
 import CreateNewFlightModal from "./CreateNewFlightModal"
+import { validateRequired, validateDateTime } from "../utils/validators"
 
 /* eslint-disable */
 
@@ -120,10 +121,16 @@ const Dashboard = () => {
 
         const flightToUpdate = ids[row.index]
 
+        // Formatting DateTimePicker values
+        const dateTimePickerValueDeparture = new Date(values.departureTime);
+        const departureTime = moment(dateTimePickerValueDeparture).format('YYYY-MM-DDTHH:mm:ss');
+        const dateTimePickerValueArrival = new Date(values.arrivalTime);
+        const arrivalTime = moment(dateTimePickerValueArrival).format('YYYY-MM-DDTHH:mm:ss');
+
         const flightData = {
           flightNumber: values.flightNumber,
-          departureTime: moment(values.departureTime).format('YYYY-MM-DDTHH:mm:ss.SSS'),
-          arrivalTime: moment(values.arrivalTime).format('YYYY-MM-DDTHH:mm:ss.SSS'),
+          departureTime: departureTime,
+          arrivalTime: arrivalTime,
           aircraftType: values.aircraftType,
           aircraftRegistration: values.aircraftRegistration
         };
@@ -179,18 +186,31 @@ const Dashboard = () => {
     [flights],
   )
 
+
+
   const getCommonEditTextFieldProps = useCallback(
     (cell) => {
       return {
         error: !!validationErrors[cell.id],
         helperText: validationErrors[cell.id],
         onBlur: (event) => {
-          const isValid = validateRequired(event.target.value)
-          if (!isValid) {
+          const isEmpty = validateRequired(event.target.value);
+          const isValidDateTime =
+            cell.column.id === 'departureTime'
+              ? validateDateTime(event.target.value)
+              : cell.column.id === 'arrivalTime'
+              ? validateDateTime(event.target.value)
+              : validateRequired(event.target.value);
+          if (!isEmpty) {
             //set validation error for cell if invalid
             setValidationErrors({
               ...validationErrors,
               [cell.id]: `${cell.column.columnDef.header} is required`,
+            });
+          } else if (!isValidDateTime) {
+            setValidationErrors({
+              ...validationErrors,
+              [cell.id]: `${cell.column.columnDef.header} is not a valid format`,
             });
           } else {
             //remove validation error for cell if valid
@@ -325,7 +345,5 @@ const Dashboard = () => {
     </Box>
   )
 }
-
-const validateRequired = (value) => !!value.length;
 
 export default Dashboard
